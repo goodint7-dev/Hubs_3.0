@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">Hubs_3.0</string>
+    <string name="app_name">Hubs 3.0</string>
+    <string name="info_title">About This App</string>
+    <string name="info_p1"> All measurements are in Feet and Inches within the slider calculator.
+    Width is in feet and half feet (6 inches),
+        Height is in Inches and half inches,
+        and Slope is in Percent and tenths</string>
+    <string name="info_title_2">Techniques</string>
+    <string name="info_p2">Often the calculator will answer with something like 5.60 inches.
+        You can adjust the slope slightly either side of 2.0, (1.9 and 2.1, and see what the
+    hub depth reads, to help you decide if 5.5 or 5.75 is the number you would like to use.  </string>
+    <string name="info_back_button">Back</string>
 </resources>
