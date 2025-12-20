@@ -112,7 +112,7 @@ fun calcSteps(min: Float, max: Float, stepSize: Float): Int {
 @Composable
 fun HubsAppScreen(
     navController: NavController,
-    hubsViewModel: HubsViewModel = viewModel()
+    hubsViewModel: HubsViewModel
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
     val currentLiftValue by hubsViewModel.liftValue.collectAsStateWithLifecycle()
@@ -363,10 +363,15 @@ fun HubsAppScreen(
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val sharedViewModel: HubsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
     NavHost(navController = navController, startDestination = "main") {
-        composable("main") { HubsAppScreen(navController = navController) }
+        composable("main") { HubsAppScreen(
+            hubsViewModel = sharedViewModel,
+            navController = navController) }
         composable("info") { InfoScreen(navController = navController) }
-        composable("calculator") { AdvancedCalculatorScreen(navController = navController) }
+        composable("calculator") { AdvancedCalculatorScreen(
+            hubsViewModel = sharedViewModel,
+            navController = navController) }
     }
 }
 

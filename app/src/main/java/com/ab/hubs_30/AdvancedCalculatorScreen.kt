@@ -61,7 +61,7 @@ fun ValidatingNumericalInput(
 @Composable
 fun AdvancedCalculatorScreen(
     navController: NavController,
-    hubsViewModel: HubsViewModel = viewModel()
+    hubsViewModel: HubsViewModel
 ) {
     // Local state for the text fields, initialized from the ViewModel
 
