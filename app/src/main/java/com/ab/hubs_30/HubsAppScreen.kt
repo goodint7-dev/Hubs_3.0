@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +53,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VerticalSlider(
     value: Float,
@@ -59,7 +61,7 @@ fun VerticalSlider(
     valueRange: ClosedFloatingPointRange<Float>,
     modifier: Modifier = Modifier,
     steps: Int = 0,
-    colors: SliderColors = SliderDefaults.colors()
+    colors: SliderColors
 ) {
     BoxWithConstraints(
         modifier = modifier,
@@ -74,11 +76,9 @@ fun VerticalSlider(
             modifier = Modifier
                 .graphicsLayer {
                     rotationZ = 270f
-                    // The transform origin is crucial for proper layout after rotation
                     transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0f, 0f)
                 }
                 .layout { measurable, constraints ->
-                    // Swap the width and height constraints for the rotated slider
                     val placeable = measurable.measure(
                         Constraints(
                             minWidth = constraints.minHeight,
@@ -87,16 +87,10 @@ fun VerticalSlider(
                             maxHeight = constraints.maxWidth,
                         )
                     )
-                    // The layout system doesn't automatically handle the new size of the
-                    // rotated composable, so we must manually specify the new width and height.
                     layout(placeable.height, placeable.width) {
-                        // Place the composable, offsetting it to the left by its width to
-                        // bring it back into the visible bounds of the parent Box.
-                        placeable.place(-placeable.width, 0)
+                        placeable.place(x = -placeable.width, y = 0)
                     }
                 }
-                // After rotation and layout, the slider's logical "width" is now the
-                // max height of its container, and its "height" is a fixed value.
                 .width(maxHeight)
                 .height(48.dp)
         )
@@ -109,6 +103,7 @@ fun calcSteps(min: Float, max: Float, stepSize: Float): Int {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HubsAppScreen(
     navController: NavController,
@@ -125,9 +120,9 @@ fun HubsAppScreen(
         inactiveTrackColor = Color.Gray
     )
     val minLift = 1.0f
-    val maxLift = 36.0f
+    val maxLift = maxOf(currentLiftValue + 2.0f,    36.0f)
     val minWidth = 10.0f
-    val maxWidth = 80.0f
+    val maxWidth = maxOf( currentWidthValue + 2.0f, 40.0f)
     val minSlope = 0.5f
     val maxSlope = 5.0f
 
@@ -230,7 +225,7 @@ fun HubsAppScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Hub Depth: ${ "%.2f".format(calculatedHubDepth)} Inches",
+                        text = "Hub Depth: ${ hubsViewModel.formatToFraction(calculatedHubDepth)} Inches",
                         style = MaterialTheme.typography.displaySmall
                     )
                 }

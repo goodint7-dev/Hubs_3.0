@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlin.math.floor
 
 //setups for the viewmodel, saved state handle, and stateflow
 
@@ -46,7 +47,7 @@ class HubsViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         widthValue
     ) { currentLift, currentSlope, currentWidth ->
         recalculateHubDepth(currentLift, currentSlope, currentWidth)
-    } .stateIn(
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = recalculateHubDepth(
@@ -55,6 +56,24 @@ class HubsViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
             width = widthValue.value
         )
     )
+
+    fun formatToFraction(value: Float): String {
+        val integerPart = floor(value).toInt()
+        val fractionalPart = value - integerPart
+        
+        // Round down to nearest 1/4th (quarter)
+        val quarters = floor(fractionalPart * 4).toInt()
+        
+        val fractionString = when (quarters) {
+            0 -> ""
+            1 -> " 1/4"
+            2 -> " 1/2"
+            3 -> " 3/4"
+            else -> ""
+        }
+        
+        return "$integerPart$fractionString"
+    }
 
     //
     fun recalculateHubDepth(lift: Float, slope: Float, width: Float): Float {
@@ -67,6 +86,5 @@ class HubsViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         Log.d("HubCalculations", "halfWidth: $halfWidth, calcSlope: $calcSlope, ctrHeight: $ctrHeight, eLift: $eLift")
         Log.d("HubCalculations", "hubDepth: $hubDepth")
         return hubDepth
-     //   return eLift
     }
 }

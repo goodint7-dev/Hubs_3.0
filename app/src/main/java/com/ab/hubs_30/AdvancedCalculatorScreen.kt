@@ -20,12 +20,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Yellow
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 @Composable
@@ -35,14 +36,19 @@ fun ValidatingNumericalInput(
     onValidValueChange: (Float) -> Unit,
     mustBePositive: Boolean = false
 ){
- //   @Suppress("UNUSED_VARIABLE", "ASSIGNED_VALUE")
-    var displayValue by remember { mutableStateOf(initialValue.toString())
+    var textFieldValue by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = initialValue.toString(),
+                selection = TextRange.Zero
+            )
+        )
     }
     OutlinedTextField(
-        value = displayValue,
-        onValueChange = { newText ->
-            displayValue = newText
-            val safeFloat = newText.toFloatOrNull()
+        value = textFieldValue,
+        onValueChange = { newTextFieldValue ->
+            textFieldValue = newTextFieldValue
+            val safeFloat = newTextFieldValue.text.toFloatOrNull()
             if (safeFloat != null) {
                 if (mustBePositive && safeFloat < 0f) {
                     //do nothing with negative numbers
@@ -53,7 +59,15 @@ fun ValidatingNumericalInput(
         },
         label = { Text(label)},
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+        modifier = Modifier.onFocusChanged { focusState ->
+            if (focusState.isFocused) {
+                val text = textFieldValue.text
+                textFieldValue = textFieldValue.copy(
+                    selection = TextRange(0, text.length)
+                )
+            }
+        }
     )
 }
 
@@ -76,7 +90,6 @@ fun AdvancedCalculatorScreen(
     ) {
         Column(
             modifier = Modifier
-                .background(Color.Green)
                 .padding(16.dp)
                 .weight(50f)
                 .fillMaxHeight()
@@ -113,7 +126,6 @@ fun AdvancedCalculatorScreen(
         }
         Column(
             modifier = Modifier
-                .background(Yellow)
                 .padding(16.dp)
                 .weight(50f)
                 .fillMaxHeight(),
@@ -127,7 +139,7 @@ fun AdvancedCalculatorScreen(
 
             // Formatted result text
             Text(
-                text = "%.2f".format(calculatedHubDepth),
+                text = hubsViewModel.formatToFraction(calculatedHubDepth),
                 style = MaterialTheme.typography.displayMedium
             )
             Text(
