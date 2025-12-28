@@ -126,7 +126,11 @@ fun HubsAppScreen(
     val minSlope = 0.5f
     val maxSlope = 5.0f
 
-    Column(modifier = Modifier.fillMaxSize().background(Color.LightGray)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.LightGray)
+        .safeDrawingPadding()
+    ) {
         // Manual Title Bar
         Row(
             modifier = Modifier
@@ -166,8 +170,8 @@ fun HubsAppScreen(
         // Main Content
         Row(
             modifier = Modifier
-                .fillMaxSize()
-                .safeDrawingPadding()
+                .fillMaxWidth()
+                .weight(1f) // Use weight instead of fillMaxSize to fill remaining space
         ) {
             Column(
                 modifier = Modifier
