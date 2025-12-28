@@ -358,7 +358,7 @@ fun HubsAppScreen(
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val sharedViewModel: HubsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    val sharedViewModel: HubsViewModel = viewModel()
     NavHost(navController = navController, startDestination = "main") {
         composable("main") { HubsAppScreen(
             hubsViewModel = sharedViewModel,
