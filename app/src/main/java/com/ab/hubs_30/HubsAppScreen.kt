@@ -1,9 +1,9 @@
 package com.ab.hubs_30
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,11 +17,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,9 +28,6 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -42,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
@@ -53,6 +47,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VerticalSlider(
@@ -109,7 +104,6 @@ fun HubsAppScreen(
     navController: NavController,
     hubsViewModel: HubsViewModel
 ) {
-    var menuExpanded by remember { mutableStateOf(false) }
     val currentLiftValue by hubsViewModel.liftValue.collectAsStateWithLifecycle()
     val currentSlopeValue by hubsViewModel.slopeValue.collectAsStateWithLifecycle()
     val currentWidthValue by hubsViewModel.widthValue.collectAsStateWithLifecycle()
@@ -120,9 +114,9 @@ fun HubsAppScreen(
         inactiveTrackColor = Color.Gray
     )
     val minLift = 1.0f
-    val maxLift = maxOf(currentLiftValue + 2.0f,    36.0f)
+    val maxLift = 36.0f
     val minWidth = 10.0f
-    val maxWidth = maxOf( currentWidthValue + 2.0f, 40.0f)
+    val maxWidth = 80f
     val minSlope = 0.5f
     val maxSlope = 5.0f
 
@@ -136,35 +130,21 @@ fun HubsAppScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.DarkGray) // Changed from MaterialTheme.colorScheme.primary
-                .padding(horizontal = 8.dp, vertical = 4.dp),
+                .padding(horizontal = 8.dp, vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Hubs 3.0", style = MaterialTheme.typography.titleLarge, color = Color.White) // Changed color
+            Text("Hubs 3.0", style = MaterialTheme.typography.titleMedium, color = Color.White) // Changed color
             Spacer(modifier = Modifier.weight(1f))
-            Box {
-                IconButton(onClick = { menuExpanded = true }) {
-                    Icon(Icons.Filled.MoreVert, contentDescription = "More options", tint = Color.White) // Changed tint
-                }
-                DropdownMenu(
-                    expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Information") },
-                        onClick = {
-                            navController.navigate("info")
-                            menuExpanded = false
-                        }
+            IconButton(onClick = { navController.navigate("info") }) {
+
+
+                Icon(
+                    painter = painterResource(id = R.drawable.icon_i),
+                    contentDescription = "Information",
+                    tint = Color.White
                     )
-                    DropdownMenuItem(
-                        text = { Text("Special Calculator") },
-                        onClick = {
-                            navController.navigate("calculator")
-                            menuExpanded = false
-                        }
-                    )
-                }
             }
+
         }
 
         // Main Content
@@ -350,7 +330,7 @@ fun HubsAppScreen(
                     steps = calcSteps(minSlope, maxSlope, 0.1f),
                     colors = sliderColors,
                     modifier = Modifier
-                        .fillMaxHeight(0.8f) // Or .height(500.dp) as you had
+                        .fillMaxHeight(0.8f)
                         .width(60.dp)
                 )
             }
@@ -368,9 +348,6 @@ fun AppNavigation() {
             hubsViewModel = sharedViewModel,
             navController = navController) }
         composable("info") { InfoScreen(navController = navController) }
-        composable("calculator") { AdvancedCalculatorScreen(
-            hubsViewModel = sharedViewModel,
-            navController = navController) }
     }
 }
 
@@ -380,6 +357,7 @@ fun InfoScreen(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .safeDrawingPadding()
             .padding(16.dp)
             .verticalScroll(rememberScrollState()) // This makes the column scrollable
     ) {

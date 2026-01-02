@@ -12,8 +12,8 @@ android {
         applicationId = "com.ab.hubs_30"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,37 +28,50 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
     }
 }
-
 dependencies {
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.3") // Or latest
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.material3)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-//    implementation("androidx.compose.material3:material3:1.4.0")
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    // 1. Core Android Basics (Stable Downgrades)    // Downgrading from 1.17.0 -> 1.13.1
+    implementation("androidx.core:core-ktx:1.13.1")
+    // Downgrading from 2.10.0 -> 2.8.6
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
+    // Downgrading from 1.12.1 -> 1.9.3
+    implementation("androidx.activity:activity-compose:1.9.3")
+
+    // 2. The Compose Bill of Materials (BOM)
+    // This controls the versions of ui, material3, and graphics.
+    // Downgrading from 2025.12.00 -> 2024.10.00 (This is the critical fix for IDE crashes)
+    implementation(platform("androidx.compose:compose-bom:2024.10.00"))
+
+    // These libraries now automatically use the stable versions defined by the BOM above
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+
+    // 3. Navigation
+    // Downgrading from 2.9.6 -> 2.8.3 (Rock-solid stability)
+    implementation("androidx.navigation:navigation-compose:2.8.3")
+
+    // 4. ViewModel for Compose
+    // Downgrading from 2.10.0 -> 2.8.6
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
+
+    // Optional: If you use testing, make sure these match the BOM too
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.10.00"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
 }
