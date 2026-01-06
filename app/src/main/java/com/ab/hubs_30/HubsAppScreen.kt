@@ -3,11 +3,14 @@ package com.ab.hubs_30
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,10 +20,11 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderColors
@@ -33,9 +37,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
@@ -71,7 +75,7 @@ fun VerticalSlider(
             modifier = Modifier
                 .graphicsLayer {
                     rotationZ = 270f
-                    transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0f, 0f)
+                    transformOrigin = TransformOrigin(0f, 0f)
                 }
                 .layout { measurable, constraints ->
                     val placeable = measurable.measure(
@@ -109,49 +113,59 @@ fun HubsAppScreen(
     val currentWidthValue by hubsViewModel.widthValue.collectAsStateWithLifecycle()
     val calculatedHubDepth by hubsViewModel.hubDepthResult.collectAsStateWithLifecycle()
     val sliderColors = SliderDefaults.colors(
-        thumbColor = Color.White,
-        activeTrackColor = Color.White,
+        thumbColor = Color.Black,
+        activeTrackColor = Color(0xFF0055BB),
         inactiveTrackColor = Color.Gray
     )
     val minLift = 1.0f
-    val maxLift = 36.0f
+    val maxLift = 24.0f
     val minWidth = 10.0f
-    val maxWidth = 80f
+    val maxWidth = 48f
     val minSlope = 0.5f
     val maxSlope = 5.0f
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.LightGray)
-        .safeDrawingPadding()
-    ) {
-        // Manual Title Bar
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.DarkGray) // Changed from MaterialTheme.colorScheme.primary
-                .padding(horizontal = 8.dp, vertical = 2.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Hubs 3.0", style = MaterialTheme.typography.titleMedium, color = Color.White) // Changed color
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { navController.navigate("info") }) {
-
-
+                .fillMaxSize()
+                .safeDrawingPadding()
+        ){
+            //title bar here
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(44.dp)
+                    .background(Color.Black)
+                    .padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text(
+                    text = "Hub Depth Calculator",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                // Info icon
                 Icon(
-                    painter = painterResource(id = R.drawable.icon_i),
-                    contentDescription = "Information",
-                    tint = Color.White
-                    )
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "Info",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .aspectRatio(1f)
+                        .padding(8.dp)
+                        .clickable {
+                        navController.navigate("info")
+                    }
+                )
             }
 
-        }
+
 
         // Main Content
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f) // Use weight instead of fillMaxSize to fill remaining space
+                .weight(1f)
         ) {
             Column(
                 modifier = Modifier
@@ -353,40 +367,48 @@ fun AppNavigation() {
 
 @Composable
 fun InfoScreen(navController: NavController) {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .safeDrawingPadding()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState()) // This makes the column scrollable
     ) {
-        Text(
-            text = stringResource(id = R.string.info_title),
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(id = R.string.info_p1),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(id = R.string.info_title_2),
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(id = R.string.info_p2),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = { navController.popBackStack() }) {
-            Text(stringResource(id = R.string.info_back_button))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .safeDrawingPadding()
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()) // This makes the column scrollable
+        ) {
+            Text(
+                text = stringResource(id = R.string.info_title),
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(id = R.string.info_p1),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(id = R.string.info_title_2),
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(id = R.string.info_p2),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
         }
+            Button(onClick = { navController.popBackStack() }
+                , modifier = Modifier.align(Alignment.TopEnd)
+            ) {
+                Text(stringResource(id = R.string.info_back_button))
+            }
+
     }
 }
