@@ -7,6 +7,9 @@
         Slope is in Percent and tenths</string>
     <string name="info_title_2">Techniques</string>
     <string name="info_p2">This tool rounds down to the nearest 1/4 inch.\n The result is a slightly
-        slightly steeper slope. </string>
+        steeper slope. If the Hub depth number is below zero (negative) it will turn red, \n
+        as an indicator that additional lift is needed. typically we use 6 inch jacks,\n
+        so the lift will then be for instance, 2 inches AC plus 6 inches jack size,\n
+        for 8 inches total lift </string>
     <string name="info_back_button">Back</string>
 </resources>

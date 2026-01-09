@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
@@ -102,6 +103,7 @@ fun calcSteps(min: Float, max: Float, stepSize: Float): Int {
 }
 
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HubsAppScreen(
@@ -135,12 +137,13 @@ fun HubsAppScreen(
                     .fillMaxWidth()
                     .height(44.dp)
                     .background(Color.Black)
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
+
             ){
                 Text(
                     text = "Hub Depth Calculator",
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     color = Color.White,
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -154,8 +157,8 @@ fun HubsAppScreen(
                         .aspectRatio(1f)
                         .padding(8.dp)
                         .clickable {
-                        navController.navigate("info")
-                    }
+                            navController.navigate("info")
+                        }
                 )
             }
 
@@ -222,9 +225,18 @@ fun HubsAppScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
+                    val jackRequired = calculatedHubDepth < 0.0f
+
                     Text(
+                        //color it red IF this number is negative
+
                         text = "Hub Depth: ${ hubsViewModel.formatToFraction(calculatedHubDepth)} Inches",
-                        style = MaterialTheme.typography.displaySmall
+                        color = if(jackRequired) Color.Red else Color.Black,
+                        style = if(jackRequired){
+                            MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold)
+                         } else {
+                            MaterialTheme.typography.displaySmall
+                         }
                     )
                 }
                 Row(
